@@ -1,0 +1,5 @@
+#!/bin/sh
+
+script_file="django-init"
+chmod a+x $script_file
+cp $script_file /usr/local/bin/${script_file}
