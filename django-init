@@ -6,84 +6,57 @@ ROOT_PATH=$PWD
 
 # Input
 input() {
-  read -p "Project directory name? ($DEFAULT_PROJECT_DIR_NAME) : " project_dir_name
-  read -p "Django version? ex) 1.11.6 (latest) : " django_version
-  read -p "Django project name? ($DEFAULT_DJANGO_PROJECT_NAME) : " django_project_name
+    read -p "Project directory name? ($DEFAULT_PROJECT_DIR_NAME) : " project_dir_name
+    read -p "Django version? ex) 1.11.6 (latest) : " django_version
+    read -p "Django project name? ($DEFAULT_DJANGO_PROJECT_NAME) : " django_project_name
 
-  if [ "$project_dir_name" = "" ]
-  then
-    project_dir_name=$DEFAULT_PROJECT_DIR_NAME
-  fi
+    if [ "$project_dir_name" = "" ]; then
+        project_dir_name=$DEFAULT_PROJECT_DIR_NAME
+    fi
 
-  if [ "$django_project_name" = "" ]
-  then
-    django_project_name=$DEFAULT_DJANGO_PROJECT_NAME
-  fi
+    if [ "$django_project_name" = "" ]; then
+        django_project_name=$DEFAULT_DJANGO_PROJECT_NAME
+    fi
 }
 
 # Create Project Directory
 create_project_dir() {
-  echo "Create Project Directory"
-  mkdir $project_dir_name
-  if [ $? != 0 ]
-  then
-    exit 1
-  fi
-  cd $project_dir_name
+    echo "Create Project Directory"
+    mkdir $project_dir_name || exit
+    cd $project_dir_name
 }
 
 # Create Virtual Environment
 create_virtualenv() {
-  echo "Create Virtual Environment"
-  python3 -m venv venv
-  activate_env_command="source venv/bin/activate"
-  eval $activate_env_command
-  if [ $? != 0 ]
-  then
-    rm -rf $ROOT_PATH/$project_dir_name
-    exit 1
-  fi
-  echo $activate_env_command > .env # autoenv
+    echo "Create Virtual Environment"
+    python3 -m venv venv
+    activate_env_command="source venv/bin/activate"
+    $activate_env_command || { rm -rf $ROOT_PATH/$project_dir_name; exit; }
+    echo $activate_env_command > .env # autoenv
 }
 
 # Install Django
 install_django() {
-echo "Install Django"
-pip install --upgrade pip
-if [ "$django_version" = "" ]
-then
-  pip install Django
-else
-  pip install Django==$django_version
-fi
-  if [ $? != 0 ]
-  then
-    rm -rf $ROOT_PATH/$project_dir_name
-    exit 1
-  fi
-pip freeze | grep -e "^Django==*" > requirements.txt
+    echo "Install Django"
+    pip install --upgrade pip
+    django_install_command="pip install Django"
+    if [ "$django_version" != "" ]; then
+        django_install_command+="==$django_version"
+    fi
+    $django_install_command || { rm -rf $ROOT_PATH/$project_dir_name; exit; }
+    pip freeze | grep -e "^Django==*" > requirements.txt
 }
 
 # Create Django Project
 create_django_proj() {
-echo "Create Django Project"
-django-admin.py startproject $django_project_name
-  if [ $? != 0 ]
-  then
-    rm -rf $ROOT_PATH/$project_dir_name
-    exit 1
-  fi
+    echo "Create Django Project"
+    django-admin.py startproject $django_project_name || { rm -rf $ROOT_PATH/$project_dir_name; exit; }
 }
 
 # Database Migration
 db_migrate() {
-echo "Database Migration"
-python $django_project_name/manage.py migrate
-  if [ $? != 0 ]
-  then
-    rm -rf $ROOT_PATH/$project_dir_name
-    exit 1
-  fi
+    echo "Database Migration"
+    python $django_project_name/manage.py migrate || { rm -rf $ROOT_PATH/$project_dir_name; exit; }
 }
 
 input
