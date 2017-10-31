@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 readonly DEFAULT_PROJECT_DIR_NAME="myproject"
 readonly DEFAULT_DJANGO_PROJECT_NAME="mydjangoproject"

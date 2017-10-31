@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 script_file="django-init"
 chmod a+x $script_file
