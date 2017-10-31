@@ -1,5 +1,4 @@
 #!/bin/bash
 
 script_file="django-init"
-chmod a+x $script_file
 sudo cp $script_file /usr/local/bin/${script_file}
