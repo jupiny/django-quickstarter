@@ -18,7 +18,7 @@ Tool for quickly creating Django projects
 ```
 $ git clone https://github.com/jupiny/django-quickstarter.git
 $ cd django-quickstarter
-$ ./configure
+$ make install
 ```
 
 ## Usage
@@ -28,4 +28,17 @@ Just type the following command in the path to create the Django project.
 
 ```
 $ django-init
+```
+
+## Uninstalliation
+
+```
+$ cd django-quickstarter
+$ make uninstall
+```
+
+Then, delete the directory that you cloned the repository.
+
+```
+$ rm -rf django-quickstarter
 ```
